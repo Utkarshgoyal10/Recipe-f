@@ -1,0 +1,78 @@
+.homepage-bg {
+    background-image: url("../../../public/bg-mobile.jpg");
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+}
+
+.nav-bar {
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* ---------------------------------------------------- */
+
+.login-page-modal, 
+.login-page-overlay{
+  width: 100vw;
+  height: 100vh;
+  top: 0%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: fixed;
+  z-index: 50;
+}
+
+
+.login-page-overlay {
+    background: rgba(49, 49, 49, 0.4);
+    backdrop-filter: blur(2px);
+}
+
+.menu-overlay {
+    background: rgba(49, 49, 49, 0.4);
+    backdrop-filter: blur(2px);
+}
+
+.login-page-modal-content {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    line-height: 1.4;
+    background: #f1f1f1;
+    padding: 14px 28px;
+    width: 100vw;
+    z-index: 51;
+    height: 100vh;
+    animation: login-page-animation .3s;
+}
+
+@keyframes login-page-animation {
+0% {
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
+}
+100% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+}
+}
+
+
+/* ------------------------------------------------------- */
+
+
+.homepage-bg-con {
+    background-image: url("../../../public/white-textured-concrete.jpg");
+    background-repeat: repeat-y;
+}
+
+@media  screen and (min-width: 768px) {
+    .homepage-bg {
+        background-image: url("../../../public/bg-desktop.jpg");
+    }
+    .login-page-modal-content {
+        left: 65%;
+        width: 35vw;
+    }
+}

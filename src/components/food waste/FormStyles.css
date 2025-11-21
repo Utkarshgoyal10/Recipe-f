@@ -1,0 +1,113 @@
+/* General styling for the form container */
+.form-container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: "Roboto", sans-serif;
+  }
+  
+  /* Form title */
+  .form-container h2 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Labels for input fields */
+  .form-container label {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+  
+  /* Input fields and textarea */
+  .form-container input[type="text"],
+  .form-container input[type="email"],
+  .form-container input[type="tel"],
+  .form-container input[type="number"],
+  .form-container textarea {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-bottom: 15px;
+    transition: border-color 0.3s ease-in-out;
+  }
+  
+  /* Focus state for input fields and textarea */
+  .form-container input[type="text"]:focus,
+  .form-container input[type="email"]:focus,
+  .form-container input[type="tel"]:focus,
+  .form-container input[type="number"]:focus,
+  .form-container textarea:focus {
+    outline: none;
+    border-color: #e26310;
+  }
+  
+  /* Textarea */
+  .form-container textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  
+  /* Submit button */
+  .form-container button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #e26310;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  /* Hover state for button */
+  .form-container button:hover {
+    background-color: #d2540c;
+  }
+  
+  /* Message styling */
+  .form-container p {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 15px;
+    color: #555;
+  }
+  
+  /* Success message */
+  .form-container p.success {
+    color: #28a745;
+  }
+  
+  /* Error message */
+  .form-container p.error {
+    color: #dc3545;
+  }
+  
+  /* Responsive design for small screens */
+  @media (max-width: 600px) {
+    .form-container {
+      padding: 20px;
+    }
+  
+    .form-container h2 {
+      font-size: 20px;
+    }
+  
+    .form-container button {
+      font-size: 14px;
+      padding: 10px;
+    }
+  }
+  

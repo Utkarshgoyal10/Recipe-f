@@ -1,0 +1,7 @@
+.css-1c2i806-MuiFormLabel-root-MuiInputLabel-root.Mui-focused {
+    color: #e26310 !important;
+}
+
+.css-v4u5dn-MuiInputBase-root-MuiInput-root:after {
+    border-bottom: 1px solid #e26310 !important;
+}

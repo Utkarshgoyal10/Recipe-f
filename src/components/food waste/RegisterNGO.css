@@ -1,0 +1,142 @@
+/* Container */
+.ngo-container {
+  max-width: 900px;
+  margin: 100px auto 40px auto; /* top margin for fixed navbar */
+  padding: 20px;
+  background: radial-gradient(circle, #f0a028 0%, #ffffff 0%, #f3c887 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Heading */
+.ngo-container h2 {
+  color: #007bff;
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+
+/* Mode toggle */
+.mode-toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.mode-toggle-buttons button {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s, color 0.3s;
+}
+.mode-toggle-buttons button.active {
+  background-color: #007bff;
+  color: #fff;
+}
+.mode-toggle-buttons button.inactive {
+  background-color: #ddd;
+  color: #000;
+}
+
+/* Flex container for desktop */
+.ngo-flex {
+  display: flex;
+  gap: 20px;
+  flex-wrap: nowrap;
+}
+
+/* Form */
+.ngo-form {
+  flex: 1 1 400px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 80vh; /* allow scroll if needed on large screens */
+  padding-right: 5px;
+}
+
+/* Scrollbar */
+.ngo-form::-webkit-scrollbar {
+  width: 6px;
+}
+.ngo-form::-webkit-scrollbar-thumb {
+  background-color: rgba(0,123,255,0.5);
+  border-radius: 3px;
+}
+
+/* Form elements */
+.ngo-form label {
+  margin-top: 10px;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.ngo-form button[type="submit"], .ngo-form button[type="button"] {
+  margin-top: 15px;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 16px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Map */
+.ngo-map {
+  flex: 1 1 400px;
+  min-height: 400px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Success popup */
+.success-popup {
+  position: fixed;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #28a745;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  font-weight: 500;
+  z-index: 9999;
+  opacity: 0.95;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .ngo-flex {
+    flex-direction: column; /* stack form + map */
+  }
+
+  .ngo-form {
+    max-height: none; /* remove restriction, full form scrolls naturally */
+    width: 100%;
+  }
+
+  .ngo-map {
+    min-height: 300px;
+    width: 100%;
+    margin-top: 20px; /* space between form and map */
+  }
+}
+.ngo-flex {
+  display: flex;
+  gap: 20px;
+  flex-wrap: nowrap;
+  /* Removed flex:1 & overflow restrictions */
+}

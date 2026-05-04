@@ -202,7 +202,7 @@ const SearchByIngredientsPage = () => {
 
     const renderInitialStatus = () => (
         <div className='min-h-[65vh] text-center md:min-h-[70vh] flex flex-col items-center justify-center w-[100%]'>
-            <img src='/search-recipe-img8.jpg' alt='search recipe' className='md:w-[35%] w-[90%]' />
+            <img src='/search-recipe-img.jpg' alt='search recipe' className='md:w-[35%] w-[90%]' />
             <p className='md:text-[23px] text-[20px] mt-2 text-[#474747] font-bold font-["Roboto"] '>Search recipes by their Ingredients</p>
         </div>
     )

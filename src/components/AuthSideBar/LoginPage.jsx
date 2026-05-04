@@ -45,7 +45,7 @@ const LoginPage = (props) => {
         }
 
         // const loginUrl = "http://localhost:5000/login/"
-        const loginUrl = "https://recipe-rower.onrender.com/auth/login"
+        const loginUrl = "https://recipe-b.onrender.com/auth/login"
         const LoginDetails = {
             userName,
             email,

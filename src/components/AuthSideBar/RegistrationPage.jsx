@@ -77,7 +77,7 @@ const RegistrationPage = (props) => {
         const createdAt = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 
         // const registerUrl = "http://localhost:5000/register/"
-        const registerUrl = "https://recipe-rower.onrender.com/auth/register"
+        const registerUrl = "https://recipe-b.onrender.com/auth/register"
         const username = userName.toLowerCase()
         const em = email.toLowerCase()
         const registerDetails = {

@@ -5,7 +5,7 @@ import MessageContainer from './MessageContainer';
 import SendMessageForm from './SendMessageForm';
 import './style.css';
 
-const socket = io('http://localhost:8000');
+const socket = io('https://recipe-b.onrender.com');
 
 const Discuss = () => {
   const gradientStyle = {

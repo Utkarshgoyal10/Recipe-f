@@ -1,138 +1,151 @@
-import React, { useState } from "react";
-import "./FormStyles.css";
+import React, { useState, useEffect } from "react";
+import Map from "./Map";
+import SearchBox from "./Search";
+import { submitForm, reverseGeocode } from "../../utils/api";
+import './RegisterNGO.css'
 
-const FoodDonation = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    foodDescription: "",
-    address: "",
-    quantity: "",
-  });
-  const [foodImage, setFoodImage] = useState(null); // State for the food image
-  const [message, setMessage] = useState("");
+export default function DonorForm() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [foodItem, setFoodItem] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [expiry, setExpiry] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  // Address fields
+  const [house, setHouse] = useState("");
+  const [street, setStreet] = useState("");
+  const [town, setTown] = useState("");
+  const [district, setDistrict] = useState("");
+  const [state, setState] = useState("");
+  const [pincode, setPincode] = useState("");
+  const [addressDisplay, setAddressDisplay] = useState("");
+
+  const [lat, setLat] = useState(null);
+  const [lon, setLon] = useState(null);
+
+  const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState("gps"); // gps/manual
+  const [successMsg, setSuccessMsg] = useState(""); // popup message
+
+  // Reset address fields on mode change
+  useEffect(() => {
+    setHouse(""); setStreet(""); setTown(""); setDistrict("");
+    setState(""); setPincode(""); setAddressDisplay(""); setLat(null); setLon(null);
+  }, [mode]);
+
+  const handleSelect = (place) => {
+    setAddressDisplay(place.display_name || "");
+    setLat(parseFloat(place.lat)); setLon(parseFloat(place.lon));
+    const a = place.address || {};
+    setTown(a.town || a.city || a.village || "");
+    setDistrict(a.county || a.state_district || "");
+    setState(a.state || ""); setPincode(a.postcode || "");
+    setStreet(a.road || ""); setHouse(a.house_number || "");
   };
 
-  const handleImageChange = (e) => {
-    setFoodImage(e.target.files[0]);
+  const handleMapClick = async ({ lat, lon }) => {
+    setLat(lat); setLon(lon);
+    try {
+      const res = await reverseGeocode(lat, lon);
+      if (res && res.address) {
+        const a = res.address;
+        setTown(a.town || a.city || a.village || "");
+        setDistrict(a.county || a.state_district || "");
+        setState(a.state || ""); setPincode(a.postcode || "");
+        setStreet(a.road || ""); setHouse(a.house_number || "");
+        setAddressDisplay(res.display_name || "");
+      } else setAddressDisplay(`${lat}, ${lon}`);
+    } catch { setAddressDisplay(`${lat}, ${lon}`); }
+  };
+
+  const handleUseMyLocation = () => {
+    if (!navigator.geolocation) return alert("Your browser does not support location");
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        await handleMapClick({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+        setSuccessMsg("✅ Current location fetched successfully!");
+        setTimeout(() => setSuccessMsg(""), 3000);
+      },
+      () => alert("Unable to access your GPS location"),
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const donationUrl = "http://localhost:5000/api/food/donate";
-
-    const formDataWithImage = new FormData();
-    formDataWithImage.append("name", formData.name);
-    formDataWithImage.append("email", formData.email);
-    formDataWithImage.append("phone", formData.phone);
-    formDataWithImage.append("foodDescription", formData.foodDescription);
-    formDataWithImage.append("address", formData.address);
-    formDataWithImage.append("quantity", formData.quantity);
-    if (foodImage) {
-      formDataWithImage.append("foodImage", foodImage); // Add image
-    }
-
-    const options = {
-      method: "POST",
-      body: formDataWithImage,
-    };
-
+    if (!lat || !lon) return alert("Select an address or use GPS first.");
+    if (!town) return alert("Nearest town is required.");
+    setLoading(true);
     try {
-      const response = await fetch(donationUrl, options);
-      if (response.ok) {
-        setMessage("Donation details shared with NGOs!");
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          foodDescription: "",
-          address: "",
-          quantity: "",
-        });
-        setFoodImage(null); // Clear image
-      } else {
-        const errorData = await response.json();
-        setMessage("Error: " + (errorData.message || "Something went wrong."));
-      }
-    } catch (error) {
-      setMessage("Error: Unable to connect to the server.");
-    }
+      const payload = {
+        name, email, phone, foodItem, quantity, expiry,
+        house, street, town, district, state, pincode,
+        address: addressDisplay, lat: Number(lat), lon: Number(lon)
+      };
+      const res = await submitForm(payload, "donor");
+      alert(res.message || "Submitted");
+      // reset
+      setName(""); setEmail(""); setPhone(""); setFoodItem(""); setQuantity(""); setExpiry("");
+      setHouse(""); setStreet(""); setTown(""); setDistrict(""); setState(""); setPincode("");
+      setAddressDisplay(""); setLat(null); setLon(null); setMode("gps");
+    } catch { alert("Error submitting"); } finally { setLoading(false); }
   };
 
   return (
-    <div className="form-container">
-      <h2>Donate Food</h2>
-      {message && <p>{message}</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Your Name *</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
+    <div className="ngo-container">
+      <h2>Donor Form</h2>
+
+      {/* Success popup */}
+      {successMsg && <div className="success-popup">{successMsg}</div>}
+
+      {/* Mode toggle */}
+      <div className="mode-toggle-buttons">
+        <button className={mode==="gps"?"active":"inactive"} onClick={()=>setMode("gps")}>📍 Use Current Location</button>
+        <button className={mode==="manual"?"active":"inactive"} onClick={()=>setMode("manual")}>✏️ Enter Manually</button>
+      </div>
+
+      <div className="ngo-flex">
+        <div className="ngo-form">
+          {/* GPS button */}
+          {mode==="gps" && (
+            <button type="button" onClick={handleUseMyLocation}>
+              🔄 Use Current Location Again
+            </button>
+          )}
+
+          <form onSubmit={handleSubmit}>
+            <label>Donor Name</label><input className="input" value={name} onChange={e=>setName(e.target.value)}/>
+            <label>Email</label><input className="input" value={email} onChange={e=>setEmail(e.target.value)}/>
+            <label>Phone</label><input className="input" value={phone} onChange={e=>setPhone(e.target.value)}/>
+            <label>Food / Item Details</label><input className="input" value={foodItem} onChange={e=>setFoodItem(e.target.value)}/>
+            <label>Quantity / Weight</label><input className="input" value={quantity} onChange={e=>setQuantity(e.target.value)}/>
+            <label>Expiry Date / Best Before (optional)</label><input className="input" value={expiry} onChange={e=>setExpiry(e.target.value)}/>
+
+            {mode==="manual" && <>
+              <label>Search Address</label>
+              <SearchBox address={addressDisplay} setAddress={setAddressDisplay} setLat={setLat} setLon={setLon} onSelect={handleSelect}/>
+            </>}
+
+            <label>House / Building</label><input className="input" value={house} onChange={e=>setHouse(e.target.value)}/>
+            <label>Street / Locality</label><input className="input" value={street} onChange={e=>setStreet(e.target.value)}/>
+            <label>Town / City</label><input className="input" value={town} onChange={e=>setTown(e.target.value)}/>
+            <label>District</label><input className="input" value={district} onChange={e=>setDistrict(e.target.value)}/>
+            <label>State</label><input className="input" value={state} onChange={e=>setState(e.target.value)}/>
+            <label>Pincode</label><input className="input" value={pincode} onChange={e=>setPincode(e.target.value)}/>
+            <label>Full Address</label><input className="input" value={addressDisplay} readOnly/>
+            <label>Latitude</label><input className="input" value={lat ?? ""} readOnly/>
+            <label>Longitude</label><input className="input" value={lon ?? ""} readOnly/>
+
+            <button type="submit" disabled={loading}>{loading?"Submitting...":"Submit"}</button>
+          </form>
         </div>
-        <div>
-          <label>Email *</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
+
+        <div className="ngo-map">
+          <Map lat={lat} lon={lon} onMapClick={handleMapClick}/>
         </div>
-        <div>
-          <label>Phone *</label>
-          <input
-            type="tel"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Food Description *</label>
-          <textarea
-            name="foodDescription"
-            value={formData.foodDescription}
-            onChange={handleChange}
-            required
-          ></textarea>
-        </div>
-        <div>
-          <label>Pickup Address</label>
-          <textarea
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-          ></textarea>
-        </div>
-        <div>
-          <label>Quantity (in kg)</label>
-          <input
-            type="number"
-            name="quantity"
-            value={formData.quantity}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label>Food Image</label>
-          <input type="file" name="foodImage" accept="image/*" onChange={handleImageChange} />
-        </div>
-        <button type="submit">Donate</button>
-      </form>
+      </div>
     </div>
   );
-};
-
-export default FoodDonation;
+}

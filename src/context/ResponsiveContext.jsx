@@ -8,7 +8,7 @@ export const ResponsiveProvider = ({ children }) => {
   // const REACT_APP_BACKEND_URL = "https://api.ebonow.com";
   // const REACT_APP_BACKEND_URL =
   //   "https://dq6kwiyrnev7z.cloudfront.net";
-  const REACT_APP_BACKEND_URL = "http://localhost:5000";
+  const REACT_APP_BACKEND_URL = "https://recipe-b.onrender.com";
   // const REACT_APP_BACKEND_URL =
   //   "https://x1llneda5a.execute-api.ap-south-1.amazonaws.com/prod/";
 

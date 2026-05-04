@@ -93,7 +93,7 @@ const toggleDropdown = () => {
                                 className='mr-[30px] cursor-pointer'
                                 onClick={toggleDropdown}
                             >
-                                Get Involved ▼
+                                Save Food ▼
                             </li>
                             {isDropdownOpen && (
                                 <ul className="absolute bg-white shadow-md p-2 rounded-lg">

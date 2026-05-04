@@ -1,5 +1,10 @@
 {
   "routes": [
     { "src": "/(.*)", "dest": "/" }
-  ]
+  ],
+  "build": {
+    "env": {
+      "CI": "false"
+    }
+  }
 }

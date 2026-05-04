@@ -2,17 +2,24 @@ import Cookies from "js-cookie";
 import { Navigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import { AuthContext } from "../../context/AuthContext";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 const ProtectedRoute = ({element}) => {
-    const {setOpenLogin} = useContext(AuthContext)
-    const jwtToken = Cookies.get('jwtToken')
+    const context = useContext(AuthContext);
+    const jwtToken = Cookies.get('jwtToken');
+    const setOpenLogin = context?.setOpenLogin;
+
+    useEffect(() => {
+        if (jwtToken === undefined && setOpenLogin) {
+            setOpenLogin(true);
+            toast("Please Login!");
+        }
+    }, [jwtToken, setOpenLogin]);
+
     if(jwtToken === undefined){
-        setOpenLogin(true)
-        toast("Please Login!")
         return <Navigate to='/' />
     }
-    return element
+    return element;
 }
 
 export default ProtectedRoute

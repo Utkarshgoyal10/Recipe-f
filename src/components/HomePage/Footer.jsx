@@ -5,9 +5,7 @@ import {IoMdCall} from 'react-icons/io'
 import { BsFacebook, BsGithub, BsInstagram, BsTwitter } from 'react-icons/bs';
 import { Footer as foot} from 'flowbite-react';
 
-import { Typography } from "@material-tailwind/react";
- 
- 
+
 const currentYear = new Date().getFullYear();
 
 const Footer = () => {
@@ -16,14 +14,14 @@ const Footer = () => {
     <footer className="relative w-full pt-6 bg-cover bg-center bg-fixed bg-gray-100" >
       <div className="mx-auto w-full max-w-7xl px-2">
         <div className="grid grid-cols-1 justify-between gap-6 md:grid-cols-3">
-        <Typography variant="h5" className="" >
+        <div className="text-xl font-semibold">
             <img href="https://flowbite.com"
               src="./logo2.png"
               alt="Flowbite Logo"
               name="Flowbite"
                 className="w-52 mx-auto mt-8"
               />
-          </Typography>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 justify-between gap-4 col-span-2 my-auto">
           <div className="pl-5 md:w-[100%] w-[100%] ">
                     <h1 className="font-bold text-[15px] mb-2 md:mb-3 ">Explore</h1>
@@ -70,12 +68,10 @@ const Footer = () => {
           
         </div>
         <div className="mt-12 flex w-full flex-col items-center justify-center border-t border-blue-gray-50 py-4 md:flex-row md:justify-between">
-          <Typography
-            variant="small"
-            className="mb-4 text-center font-normal text-blue-gray-900 md:mb-0">
+          <p className="mb-4 text-center text-sm font-normal text-blue-gray-900 md:mb-0">
             &copy; {currentYear} <Link to="/">Recipe-Rover</Link>. All
             Rights Reserved.
-          </Typography>
+          </p>
           <div className="flex gap-4 text-blue-gray-900 sm:justify-center">
              <div className="mt-4 flex space-x-6 sm:mt-0 sm:justify-center">
             <foot.Icon href="#" icon={BsFacebook} />

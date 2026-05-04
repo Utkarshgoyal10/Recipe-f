@@ -25,6 +25,23 @@ export default function NGOForm() {
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState("gps");
   const [successMsg, setSuccessMsg] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const errs = {};
+    if (!name.trim()) errs.name = "NGO name is required.";
+    if (!contact.trim()) errs.contact = "Contact person is required.";
+    if (!email.trim()) errs.email = "Email is required.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = "Enter a valid email address.";
+    if (!phone.trim()) errs.phone = "Phone number is required.";
+    else if (!/^\d{10}$/.test(phone)) errs.phone = "Phone must be a 10-digit number.";
+    if (!pincode.trim()) errs.pincode = "Pincode is required.";
+    else if (!/^\d{6}$/.test(pincode)) errs.pincode = "Pincode must be 6 digits.";
+    if (!town.trim()) errs.town = "Town / City is required.";
+    if (!state.trim()) errs.state = "State is required.";
+    if (!lat || !lon) errs.location = "Please select a location on the map or use GPS.";
+    return errs;
+  };
 
   useEffect(() => {
     setHouse(""); setStreet(""); setTown(""); setDistrict("");
@@ -74,10 +91,9 @@ export default function NGOForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!lat || !lon) return alert("Select an address or use GPS first.");
-    if (!town) return alert("Nearest town is required.");
-    if (!phone) return alert("Phone number is required.");  // ✅ validation
-
+    const errs = validate();
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setErrors({});
     setLoading(true);
     try {
       const payload = {
@@ -127,10 +143,21 @@ export default function NGOForm() {
           )}
 
           <form onSubmit={handleSubmit}>
-            <label>NGO Name</label><input className="input" value={name} onChange={e=>setName(e.target.value)}/>
-            <label>Contact Person</label><input className="input" value={contact} onChange={e=>setContact(e.target.value)}/>
-            <label>Email</label><input className="input" value={email} onChange={e=>setEmail(e.target.value)}/>
-            <label>Phone</label><input className="input" value={phone} onChange={e=>setPhone(e.target.value)}/>
+            <label>NGO Name</label>
+            <input className={`input${errors.name ? " input-error" : ""}`} value={name} onChange={e=>setName(e.target.value)}/>
+            {errors.name && <span className="error-msg">{errors.name}</span>}
+
+            <label>Contact Person</label>
+            <input className={`input${errors.contact ? " input-error" : ""}`} value={contact} onChange={e=>setContact(e.target.value)}/>
+            {errors.contact && <span className="error-msg">{errors.contact}</span>}
+
+            <label>Email</label>
+            <input className={`input${errors.email ? " input-error" : ""}`} value={email} onChange={e=>setEmail(e.target.value)}/>
+            {errors.email && <span className="error-msg">{errors.email}</span>}
+
+            <label>Phone</label>
+            <input className={`input${errors.phone ? " input-error" : ""}`} value={phone} onChange={e=>setPhone(e.target.value)} maxLength={10}/>
+            {errors.phone && <span className="error-msg">{errors.phone}</span>}
 
             {mode==="manual" && <>
               <label>Search Address</label>
@@ -139,13 +166,25 @@ export default function NGOForm() {
 
             <label>House / Building</label><input className="input" value={house} onChange={e=>setHouse(e.target.value)}/>
             <label>Street / Locality</label><input className="input" value={street} onChange={e=>setStreet(e.target.value)}/>
-            <label>Town / City</label><input className="input" value={town} onChange={e=>setTown(e.target.value)}/>
+
+            <label>Town / City</label>
+            <input className={`input${errors.town ? " input-error" : ""}`} value={town} onChange={e=>setTown(e.target.value)}/>
+            {errors.town && <span className="error-msg">{errors.town}</span>}
+
             <label>District</label><input className="input" value={district} onChange={e=>setDistrict(e.target.value)}/>
-            <label>State</label><input className="input" value={state} onChange={e=>setState(e.target.value)}/>
-            <label>Pincode</label><input className="input" value={pincode} onChange={e=>setPincode(e.target.value)}/>
+
+            <label>State</label>
+            <input className={`input${errors.state ? " input-error" : ""}`} value={state} onChange={e=>setState(e.target.value)}/>
+            {errors.state && <span className="error-msg">{errors.state}</span>}
+
+            <label>Pincode</label>
+            <input className={`input${errors.pincode ? " input-error" : ""}`} value={pincode} onChange={e=>setPincode(e.target.value)} maxLength={6}/>
+            {errors.pincode && <span className="error-msg">{errors.pincode}</span>}
+
             <label>Full Address</label><input className="input" value={addressDisplay} readOnly/>
             <label>Latitude</label><input className="input" value={lat ?? ""} readOnly/>
             <label>Longitude</label><input className="input" value={lon ?? ""} readOnly/>
+            {errors.location && <span className="error-msg">{errors.location}</span>}
 
             <button type="submit" disabled={loading}>{loading?"Submitting...":"Submit"}</button>
           </form>

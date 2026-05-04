@@ -27,6 +27,24 @@ export default function DonorForm() {
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState("gps"); // gps/manual
   const [successMsg, setSuccessMsg] = useState(""); // popup message
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const errs = {};
+    if (!name.trim()) errs.name = "Donor name is required.";
+    if (!email.trim()) errs.email = "Email is required.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = "Enter a valid email address.";
+    if (!phone.trim()) errs.phone = "Phone number is required.";
+    else if (!/^\d{10}$/.test(phone)) errs.phone = "Phone must be a 10-digit number.";
+    if (!foodItem.trim()) errs.foodItem = "Food / item details are required.";
+    if (!quantity.trim()) errs.quantity = "Quantity is required.";
+    if (!town.trim()) errs.town = "Town / City is required.";
+    if (!state.trim()) errs.state = "State is required.";
+    if (!pincode.trim()) errs.pincode = "Pincode is required.";
+    else if (!/^\d{6}$/.test(pincode)) errs.pincode = "Pincode must be 6 digits.";
+    if (!lat || !lon) errs.location = "Please select a location on the map or use GPS.";
+    return errs;
+  };
 
   // Reset address fields on mode change
   useEffect(() => {
@@ -75,8 +93,9 @@ export default function DonorForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!lat || !lon) return alert("Select an address or use GPS first.");
-    if (!town) return alert("Nearest town is required.");
+    const errs = validate();
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setErrors({});
     setLoading(true);
     try {
       const payload = {
@@ -116,12 +135,28 @@ export default function DonorForm() {
           )}
 
           <form onSubmit={handleSubmit}>
-            <label>Donor Name</label><input className="input" value={name} onChange={e=>setName(e.target.value)}/>
-            <label>Email</label><input className="input" value={email} onChange={e=>setEmail(e.target.value)}/>
-            <label>Phone</label><input className="input" value={phone} onChange={e=>setPhone(e.target.value)}/>
-            <label>Food / Item Details</label><input className="input" value={foodItem} onChange={e=>setFoodItem(e.target.value)}/>
-            <label>Quantity / Weight</label><input className="input" value={quantity} onChange={e=>setQuantity(e.target.value)}/>
-            <label>Expiry Date / Best Before (optional)</label><input className="input" value={expiry} onChange={e=>setExpiry(e.target.value)}/>
+            <label>Donor Name</label>
+            <input className={`input${errors.name ? " input-error" : ""}`} value={name} onChange={e=>setName(e.target.value)}/>
+            {errors.name && <span className="error-msg">{errors.name}</span>}
+
+            <label>Email</label>
+            <input className={`input${errors.email ? " input-error" : ""}`} value={email} onChange={e=>setEmail(e.target.value)}/>
+            {errors.email && <span className="error-msg">{errors.email}</span>}
+
+            <label>Phone</label>
+            <input className={`input${errors.phone ? " input-error" : ""}`} value={phone} onChange={e=>setPhone(e.target.value)} maxLength={10}/>
+            {errors.phone && <span className="error-msg">{errors.phone}</span>}
+
+            <label>Food / Item Details</label>
+            <input className={`input${errors.foodItem ? " input-error" : ""}`} value={foodItem} onChange={e=>setFoodItem(e.target.value)}/>
+            {errors.foodItem && <span className="error-msg">{errors.foodItem}</span>}
+
+            <label>Quantity / Weight</label>
+            <input className={`input${errors.quantity ? " input-error" : ""}`} value={quantity} onChange={e=>setQuantity(e.target.value)}/>
+            {errors.quantity && <span className="error-msg">{errors.quantity}</span>}
+
+            <label>Expiry Date / Best Before (optional)</label>
+            <input className="input" value={expiry} onChange={e=>setExpiry(e.target.value)}/>
 
             {mode==="manual" && <>
               <label>Search Address</label>
@@ -130,13 +165,25 @@ export default function DonorForm() {
 
             <label>House / Building</label><input className="input" value={house} onChange={e=>setHouse(e.target.value)}/>
             <label>Street / Locality</label><input className="input" value={street} onChange={e=>setStreet(e.target.value)}/>
-            <label>Town / City</label><input className="input" value={town} onChange={e=>setTown(e.target.value)}/>
+
+            <label>Town / City</label>
+            <input className={`input${errors.town ? " input-error" : ""}`} value={town} onChange={e=>setTown(e.target.value)}/>
+            {errors.town && <span className="error-msg">{errors.town}</span>}
+
             <label>District</label><input className="input" value={district} onChange={e=>setDistrict(e.target.value)}/>
-            <label>State</label><input className="input" value={state} onChange={e=>setState(e.target.value)}/>
-            <label>Pincode</label><input className="input" value={pincode} onChange={e=>setPincode(e.target.value)}/>
+
+            <label>State</label>
+            <input className={`input${errors.state ? " input-error" : ""}`} value={state} onChange={e=>setState(e.target.value)}/>
+            {errors.state && <span className="error-msg">{errors.state}</span>}
+
+            <label>Pincode</label>
+            <input className={`input${errors.pincode ? " input-error" : ""}`} value={pincode} onChange={e=>setPincode(e.target.value)} maxLength={6}/>
+            {errors.pincode && <span className="error-msg">{errors.pincode}</span>}
+
             <label>Full Address</label><input className="input" value={addressDisplay} readOnly/>
             <label>Latitude</label><input className="input" value={lat ?? ""} readOnly/>
             <label>Longitude</label><input className="input" value={lon ?? ""} readOnly/>
+            {errors.location && <span className="error-msg">{errors.location}</span>}
 
             <button type="submit" disabled={loading}>{loading?"Submitting...":"Submit"}</button>
           </form>

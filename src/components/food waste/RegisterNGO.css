@@ -140,3 +140,17 @@
   flex-wrap: nowrap;
   /* Removed flex:1 & overflow restrictions */
 }
+
+/* Validation */
+.error-msg {
+  display: block;
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: -6px;
+  margin-bottom: 6px;
+}
+
+.input-error {
+  border-color: #dc2626 !important;
+  outline-color: #dc2626 !important;
+}

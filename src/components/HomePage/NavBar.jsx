@@ -1,7 +1,7 @@
 import {FiMenu} from 'react-icons/fi'
 import Cookies from 'js-cookie'
 import {RxCross2} from 'react-icons/rx'
-import { useState, useEffect, React, useContext } from 'react'
+import { useState, useEffect, useRef, React, useContext } from 'react'
 import { useNavigate, Link } from "react-router-dom";
 import './MainHomePage.css'
 import { toast } from 'react-toastify'
@@ -15,6 +15,7 @@ const NavBar = (props) => {
     const [openMenuBar, setOpenMenuBar] = useState(false);
     const [menu, setMenu] = useState(true);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
 
     useEffect(() => {
         const jwtToken = Cookies.get('jwtToken');
@@ -52,16 +53,27 @@ const NavBar = (props) => {
   
 
 const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
+    setIsDropdownOpen(prev => !prev);
 };
+
+const closeDropdown = () => setIsDropdownOpen(false);
 
     useEffect(() => {
         setScreenWidth(window.innerWidth);
         window.addEventListener("resize", handleResize);
-
         return () => {
-        window.removeEventListener("resize", handleResize);
+            window.removeEventListener("resize", handleResize);
         };
+    }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                setIsDropdownOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     return(
@@ -87,7 +99,7 @@ const toggleDropdown = () => {
                         <Link to="/discussion">
                             <li style={{color: itemsColor}} className='mr-[30px] cursor-pointer'>Discussion</li>
                         </Link>
-                        <div className="relative">
+                        <div className="relative" ref={dropdownRef}>
                             <li
                                 style={{ color: itemsColor }}
                                 className='mr-[30px] cursor-pointer'
@@ -97,10 +109,10 @@ const toggleDropdown = () => {
                             </li>
                             {isDropdownOpen && (
                                 <ul className="absolute bg-white shadow-md p-2 rounded-lg">
-                                    <Link to="/register-ngo">
+                                    <Link to="/register-ngo" onClick={closeDropdown}>
                                         <li className="cursor-pointer px-4 py-2 hover:bg-gray-200">Register as NGO</li>
                                     </Link>
-                                    <Link to="/donate-food">
+                                    <Link to="/donate-food" onClick={closeDropdown}>
                                         <li className="cursor-pointer px-4 py-2 hover:bg-gray-200">Donate Food</li>
                                     </Link>
                                 </ul>

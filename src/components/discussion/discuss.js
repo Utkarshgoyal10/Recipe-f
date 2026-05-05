@@ -34,7 +34,6 @@ const Discuss = () => {
     const handleUserJoined = (joinedName) => {
       if (!joinedName) return;
       setMessages(prev => [...prev, { type: 'system', text: `${joinedName} joined the chat` }]);
-      setOnlineCount(c => c + 1);
     };
     const handleReceive = (data) => {
       if (!data || !data.name) return;
@@ -43,13 +42,16 @@ const Discuss = () => {
     const handleLeft = (leftName) => {
       if (!leftName) return;
       setMessages(prev => [...prev, { type: 'system', text: `${leftName} left the chat` }]);
-      setOnlineCount(c => Math.max(1, c - 1));
+    };
+    const handleOnlineCount = (count) => {
+      setOnlineCount(count);
     };
 
     socket.on('chat-history', handleHistory);
     socket.on('user-joined', handleUserJoined);
     socket.on('receive', handleReceive);
     socket.on('left', handleLeft);
+    socket.on('online-count', handleOnlineCount);
 
     // Request history after listeners are set up
     socket.emit('get-history');
@@ -59,6 +61,7 @@ const Discuss = () => {
       socket.off('user-joined', handleUserJoined);
       socket.off('receive', handleReceive);
       socket.off('left', handleLeft);
+      socket.off('online-count', handleOnlineCount);
       // Notify others when navigating away
       if (nameRef.current) {
         socket.emit('user-left', nameRef.current);
